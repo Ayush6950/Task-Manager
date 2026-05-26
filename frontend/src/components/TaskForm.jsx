@@ -1,7 +1,7 @@
-    import { useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { createTask } from '../store/slices/tasksSlice';
-import { useSendSocketEvent } from '../hooks/useSocket';
+import { createTask } from '../Store/slices/tasksSlice.js';
+import { useSendSocketEvent } from '../hooks/useSocket.jsx';
 
 export default function TaskForm({ onTaskCreated }) {
   const [formData, setFormData] = useState({
