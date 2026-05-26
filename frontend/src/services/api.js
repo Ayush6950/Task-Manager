@@ -9,16 +9,28 @@ const api = axios.create({
   },
 });
 
-// Add token to requests
-// Interceptors = An HTTP Interceptor is a middleware function that sits between your client application and the server.
-//  It intercepts outgoing HTTP requests to attach data (like auth tokens) and processes 
-// incoming responses (for error handling) globally, without needing manual configuration for every single API call.
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// Request interceptor - add token to headers
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-export default api;  
+// Response interceptor - handle 401 errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;

@@ -47,6 +47,14 @@ const authSlice = createSlice({
     loading: false,
     error: null,
   },
+  reducers: {
+    logout: (state) => {
+      state.user = null;
+      state.token = null;
+      state.error = null;
+      localStorage.removeItem('token');
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(register.pending, (state) => {
