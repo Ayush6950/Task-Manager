@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
-import { updateTask, deleteTask } from '../store/slices/tasksSlice';
-import { useSendSocketEvent } from '../hooks/useSocket';
+import { updateTask, deleteTask } from '../store/slices/tasksSlice.jsx';
+import { useSendSocketEvent } from '../hooks/useSocket.jsx';
 
 export default function TaskCard({ task }) {
   const dispatch = useDispatch();

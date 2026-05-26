@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { useSocket } from '../hooks/useSocket';
-import TaskList from '../components/TaskList';
-import TaskForm from '../components/TaskForm';
-import Navbar from '../components/Navbar';
+import { useSocket } from '../hooks/useSocket.jsx';
+import TaskList from '../components/TaskList.jsx';
+import TaskForm from '../components/TaskForm.jsx';
+import Navbar from '../components/Navbar.jsx';
 
 export default function DashboardPage() {
   const { isAuthenticated, user, logout } = useAuth();
