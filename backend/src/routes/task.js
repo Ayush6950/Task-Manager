@@ -4,8 +4,8 @@ import {
     getTasks,
     updateTask,
     deleteTask
-} from '../controllers/taskcontrollers.js';
-import { authenticate } from '../middleware/auth.js';
+} from '../controllers/taskController.js';
+import { authenticate } from '../middlewares/auth.js';
 
 const router = express.Router();
 

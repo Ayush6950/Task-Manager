@@ -7,10 +7,10 @@ export const createTask = async( req , res) => {
         
         const task = new Task({
             title,
-            discription,
-            proiority,
+            description,
+            priority,
             dueDate,
-            CreatedBy:userId,
+            createdBy: userId,
         });
         await task.save();
         await task.populate('createdBy', 'name email');

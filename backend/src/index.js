@@ -2,8 +2,9 @@ import express from 'express';
 import app from './app.js';
 import connectDB from './config/database.js';
 import dotenv from 'dotenv';
-import {createserver} from 'http';
-import {Server} from 'socket.io';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import { registerSocketHandlers } from './socket/handlers.js';
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;
@@ -18,12 +19,8 @@ const io = new Server(httpServer, {
   },
 });
 
+registerSocketHandlers(io);
 
-httpServer.listen(3000);
-
-
-
-
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
