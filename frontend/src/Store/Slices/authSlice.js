@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL =
+  import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export const register = createAsyncThunk(
   'auth/register',
@@ -12,14 +13,15 @@ export const register = createAsyncThunk(
         email,
         password,
       });
+
       localStorage.setItem('token', response.data.token);
+
       return response.data.user;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message);
     }
   }
 );
-
 
 export const login = createAsyncThunk(
   'auth/login',
@@ -29,7 +31,9 @@ export const login = createAsyncThunk(
         email,
         password,
       });
+
       localStorage.setItem('token', response.data.token);
+
       return response.data.user;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message);
@@ -37,51 +41,60 @@ export const login = createAsyncThunk(
   }
 );
 
-
-
 const authSlice = createSlice({
   name: 'auth',
+
   initialState: {
     user: null,
     token: localStorage.getItem('token') || null,
     loading: false,
     error: null,
   },
+
   reducers: {
     logout: (state) => {
       state.user = null;
       state.token = null;
       state.error = null;
+
       localStorage.removeItem('token');
     },
   },
+
   extraReducers: (builder) => {
     builder
       .addCase(register.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
+
       .addCase(register.fulfilled, (state, action) => {
         state.user = action.payload;
         state.loading = false;
       })
+
       .addCase(register.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       })
+
       .addCase(login.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
+
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload;
         state.loading = false;
       })
+
       .addCase(login.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       });
   },
 });
+
+export const { logout } = authSlice.actions;
 
 export default authSlice.reducer;

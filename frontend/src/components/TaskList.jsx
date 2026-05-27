@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchTasks } from '../Store/slices/tasksSlice.jsx';
+import { fetchTasks } from "../store/slices/tasksSlice";
 import TaskCard from './TaskCard.jsx';
 
 export default function TaskList() {
