@@ -221,4 +221,60 @@ TASK - MANAGER
 ✅ Efficient pagination
 ```
 
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          CLIENT (Frontend)                               │
+│  (React/Vue - Makes HTTP requests and WebSocket connections)             │
+└────────────────────┬────────────────────────────────────────────────────┘
+                     │
+        ┌────────────┴────────────┐
+        │                         │
+   HTTP Requests           WebSocket Events
+        │                         │
+        ▼                         ▼
+┌──────────────────────────────────────────────┐
+│            Express HTTP Server               │
+│         (Port: 5000 by default)              │
+└──────────────┬──────────────────────────────┘
+               │
+      ┌────────┴────────────────────┬──────────────┐
+      │                             │              │
+      ▼                             ▼              ▼
+┌─────────────┐           ┌──────────────────┐  ┌─────────────┐
+│   Routes    │           │  Socket.IO       │  │ Middlewares │
+│ - auth.js   │           │  Namespace       │  │ - auth      │
+│ - task.js   │           │  Handlers        │  │ - validate  │
+│ - comments  │           │  (Real-time)     │  │ - rateLimit │
+└────────────┬┘           └────────┬─────────┘  └──────┬──────┘
+             │                     │                    │
+             ▼                     ▼                    ▼
+     ┌──────────────┐      ┌──────────────┐    ┌──────────────┐
+     │ Controllers  │      │ Socket       │    │ Authentication
+     │ - auth       │      │ Handlers     │    │ Token Verify
+     │ - task       │      │ (Connection  │    │ JWT Decode
+     │ - user       │      │  Events)     │    │ Rate Limit
+     │ - comment    │      │              │    │ Validation
+     └──────┬───────┘      └──────┬───────┘    └──────────────┘
+            │                     │
+            │        ┌────────────┴────────────┐
+            │        │                         │
+            ▼        ▼                         ▼
+     ┌──────────────────────────────────────────────────────┐
+     │              Data Models & Business Logic             │
+     │  ┌──────────┐  ┌──────────┐  ┌───────────┐  ┌───────┐
+     │  │  User    │  │   Task   │  │ Comment   │  │Activity
+     │  │  Model   │  │  Model   │  │  Model    │  │Model
+     │  └──────────┘  └──────────┘  └───────────┘  └───────┘
+     └──────────────────┬───────────────────────────────────┘
+                        │
+                        ▼
+         ┌──────────────────────────────────┐
+         │      MongoDB Database             │
+         │  - Collections:                  │
+         │    • users                       │
+         │    • tasks                       │
+         │    • comments                    │
+         │    • activities                  │
+         └──────────────────────────────────┘
+
 ---
