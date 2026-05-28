@@ -29,7 +29,7 @@ router.get('/my-tasks', getMyTasks);
 
 // Get all tasks with pagination and filters
 router.get(
-  '/',
+  '/all',
   validateTaskGet,
   handleValidationErrors,
   getTasks
@@ -40,7 +40,7 @@ router.get('/:id', getTaskById);
 
 // Create task
 router.post(
-  '/',
+  '/create',
   createTaskLimiter,
   validateTaskCreate,
   handleValidationErrors,

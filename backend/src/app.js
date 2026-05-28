@@ -15,8 +15,29 @@ const app = express();
 const logger = createLogger('App');
 
 /* -----------------------
+   TRUST PROXY
+   Only enable in production
+------------------------ */
+
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
+/* -----------------------
    GLOBAL MIDDLEWARES
 ------------------------ */
+
+// Debug middleware (temporary)
+app.use((req, res, next) => {
+  console.log('------------- REQUEST DEBUG -------------');
+  console.log('req.ip:', req.ip);
+  console.log('x-forwarded-for:', req.headers['x-forwarded-for']);
+  console.log('socket:', req.socket?.remoteAddress);
+  console.log('connection:', req.connection?.remoteAddress);
+  console.log('-----------------------------------------');
+
+  next();
+});
 
 // CORS
 app.use(
@@ -31,30 +52,29 @@ app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // Rate limiter
-app.use('/api/', apiLimiter);
+app.use('/api', apiLimiter);
 
 /* -----------------------
    ROUTES
 ------------------------ */
 
-app.use('/api/auth', authRoutes);
-app.use('/api/tasks', taskRoutes);
-
-/* -----------------------
-   HEALTH CHECK
------------------------- */
-
+// Health route
 app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'success',
+  res.status(200).json({
+    success: true,
     message: 'Server running ✓',
     timestamp: new Date().toISOString(),
   });
 });
 
+// Auth routes
+app.use('/api/auth', authRoutes);
+
+// Task routes
+app.use('/api/tasks', taskRoutes);
+
 /* -----------------------
-   404 HANDLER (FIXED)
-   ❌ DO NOT use app.use('*')
+   404 HANDLER
 ------------------------ */
 
 app.use((req, res) => {
@@ -66,11 +86,15 @@ app.use((req, res) => {
 });
 
 /* -----------------------
-   ERROR HANDLER
+   GLOBAL ERROR HANDLER
 ------------------------ */
 
 app.use(errorHandler);
 
-logger.info('App initialized');
+/* -----------------------
+   APP START LOG
+------------------------ */
 
-export default app;
+logger.info('App initialized successfully');
+
+export default app; 
