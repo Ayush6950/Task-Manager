@@ -1,6 +1,12 @@
 
-TASK - MANAGER
+# Task - Manager
 
+
+
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
+[![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](http://www.gnu.org/licenses/agpl-3.0)
 
 
 
@@ -119,162 +125,216 @@ TASK - MANAGER
   └── DEPLOYMENT.md                      # Deployment instructions
 
 
-### 1. Authentication & Security (Complete)
-```
-✅ User Registration with Bcrypt password hashing
-✅ Secure Login with JWT access tokens (1h expiry)
-✅ Refresh Token mechanism with DB storage (7d expiry)
-✅ Logout endpoint with token invalidation
-✅ Get Current User endpoint
-✅ Token refresh validation
-✅ Rate limiting on auth endpoints (5/15min)
-✅ Password confirmation on registration
-✅ Strong error messages (no info leakage)
-```
-
-### 2. Task Management (Complete)
-```
-✅ Create Tasks with full validation
-✅ Read All Tasks with pagination (default: 20/page, max: 100)
-✅ Get Single Task with activity history
-✅ Update Tasks with change tracking
-✅ Delete Tasks with creator authorization
-✅ Assign Tasks to users
-✅ Get User's Tasks (created AND assigned)
-✅ Filter tasks by status, priority, assignee
-✅ Search tasks by title/description
-✅ Rate limiting on task creation (10/min)
-```
-
-### 3. Activity & Audit Logging (Complete)
-```
-✅ Automatic logging on task creation
-✅ Track all updates with old/new values
-✅ Log task assignments
-✅ Log task deletion
-✅ Activity timestamps and user attribution
-✅ Retrieve activity history per task
-✅ Indexed queries for performance
-```
-
-### 4. Real-time Collaboration (Complete)
-```
-✅ Socket.io authentication with JWT
-✅ Active user tracking (online/offline)
-✅ Task room management (join/leave)
-✅ Real-time task update broadcasts
-✅ Status change notifications
-✅ Task assignment notifications
-✅ Comment activity notifications
-✅ User typing indicators
-✅ Graceful disconnection handling
-✅ Error handling for socket events
-```
-
-### 5. Input Validation & Error Handling (Complete)
-```
-✅ Email validation (format checking)
-✅ Password validation (min 6 chars, confirmation)
-✅ Task field validation (title required, length limits)
-✅ Date format validation (ISO 8601)
-✅ Enum validation (status, priority)
-✅ MongoDB ID validation
-✅ Array validation (tags)
-✅ Standardized error response format
-✅ Custom error classes for different scenarios
-✅ Mongoose error handling
-✅ JWT token error handling
-✅ Duplicate key error handling
-✅ Detailed validation error messages
-```
-
-### 6. Rate Limiting (Complete)
-```
-✅ General API limiter: 100 requests/15 min
-✅ Auth limiter: 5 attempts/15 min (skips successful)
-✅ Task creation limiter: 10/min
-✅ Rate limit headers in responses
-✅ Configurable per endpoint
-```
-
-### 7. Logging System (Complete)
-```
-✅ Structured logger with levels (ERROR, WARN, INFO, DEBUG)
-✅ Timestamp on all logs
-✅ Context information (user ID, task ID, etc)
-✅ Stack traces for errors
-✅ Request/response logging
-✅ Conditional debug mode
-✅ Production-safe error messages
-```
-
-### 8. Database & Performance (Complete)
-```
-✅ User model with refresh tokens
-✅ Task model with 4 indexes
-✅ Activity model with 2 indexes
-✅ Comment model (prepared)
-✅ Lean queries for list endpoints
-✅ Populate for detail endpoints
-✅ Foreign key references
-✅ Query optimization
-✅ Efficient pagination
-```
-
-
-┌─────────────────────────────────────────────────────────────────────────┐
-│                          CLIENT (Frontend)                               │
-│  (React/Vue - Makes HTTP requests and WebSocket connections)             │
-└────────────────────┬────────────────────────────────────────────────────┘
-                     │
-        ┌────────────┴────────────┐
-        │                         │
-   HTTP Requests           WebSocket Events
-        │                         │
-        ▼                         ▼
-┌──────────────────────────────────────────────┐
-│            Express HTTP Server               │
-│         (Port: 5000 by default)              │
-└──────────────┬──────────────────────────────┘
-               │
-      ┌────────┴────────────────────┬──────────────┐
-      │                             │              │
-      ▼                             ▼              ▼
-┌─────────────┐           ┌──────────────────┐  ┌─────────────┐
-│   Routes    │           │  Socket.IO       │  │ Middlewares │
-│ - auth.js   │           │  Namespace       │  │ - auth      │
-│ - task.js   │           │  Handlers        │  │ - validate  │
-│ - comments  │           │  (Real-time)     │  │ - rateLimit │
-└────────────┬┘           └────────┬─────────┘  └──────┬──────┘
-             │                     │                    │
-             ▼                     ▼                    ▼
-     ┌──────────────┐      ┌──────────────┐    ┌──────────────┐
-     │ Controllers  │      │ Socket       │    │ Authentication
-     │ - auth       │      │ Handlers     │    │ Token Verify
-     │ - task       │      │ (Connection  │    │ JWT Decode
-     │ - user       │      │  Events)     │    │ Rate Limit
-     │ - comment    │      │              │    │ Validation
-     └──────┬───────┘      └──────┬───────┘    └──────────────┘
-            │                     │
-            │        ┌────────────┴────────────┐
-            │        │                         │
-            ▼        ▼                         ▼
-     ┌──────────────────────────────────────────────────────┐
-     │              Data Models & Business Logic             │
-     │  ┌──────────┐  ┌──────────┐  ┌───────────┐  ┌───────┐
-     │  │  User    │  │   Task   │  │ Comment   │  │Activity
-     │  │  Model   │  │  Model   │  │  Model    │  │Model
-     │  └──────────┘  └──────────┘  └───────────┘  └───────┘
-     └──────────────────┬───────────────────────────────────┘
-                        │
-                        ▼
-         ┌──────────────────────────────────┐
-         │      MongoDB Database             │
-         │  - Collections:                  │
-         │    • users                       │
-         │    • tasks                       │
-         │    • comments                    │
-         │    • activities                  │
-         └──────────────────────────────────┘
-
+# 🗂️ Task Management API
+ 
+A production-ready REST API for collaborative task management with real-time updates, built with Node.js, Express, MongoDB, and Socket.io.
+ 
 ---
+ 
+## ✨ Features Overview
+ 
+| Category | Status |
+|---|---|
+| 🔐 Authentication & Security | ✅ Complete |
+| 📋 Task Management | ✅ Complete |
+| 📜 Activity & Audit Logging | ✅ Complete |
+| ⚡ Real-time Collaboration | ✅ Complete |
+| 🛡️ Input Validation & Error Handling | ✅ Complete |
+| 🚦 Rate Limiting | ✅ Complete |
+| 📊 Logging System | ✅ Complete |
+| 🗄️ Database & Performance | ✅ Complete |
+ 
+---
+ 
+## 🔐 Authentication & Security
+ 
+- **User Registration** with Bcrypt password hashing
+- **Secure Login** with JWT access tokens *(1h expiry)*
+- **Refresh Token** mechanism with DB storage *(7d expiry)*
+- **Logout** endpoint with token invalidation
+- **Get Current User** endpoint
+- **Token Refresh** validation
+- **Rate Limiting** on auth endpoints *(5 attempts / 15 min)*
+- **Password Confirmation** on registration
+- **Strong Error Messages** — no information leakage
+---
+ 
+## 📋 Task Management
+ 
+- **Create Tasks** with full validation
+- **Read All Tasks** with pagination *(default: 20/page, max: 100)*
+- **Get Single Task** with full activity history
+- **Update Tasks** with change tracking
+- **Delete Tasks** with creator authorization
+- **Assign Tasks** to users
+- **Get User's Tasks** — both created and assigned
+- **Filter Tasks** by status, priority, and assignee
+- **Search Tasks** by title or description
+- **Rate Limiting** on task creation *(10 / min)*
+---
+ 
+## 📜 Activity & Audit Logging
+ 
+- Automatic logging on task **creation**
+- Track all **updates** with old and new values
+- Log task **assignments**
+- Log task **deletion**
+- Activity **timestamps** and user attribution
+- Retrieve **activity history** per task
+- **Indexed queries** for performance
+---
+ 
+## ⚡ Real-time Collaboration
+ 
+Powered by **Socket.io** with JWT authentication.
+ 
+- Active **user tracking** (online / offline)
+- **Task room** management (join / leave)
+- Real-time **task update** broadcasts
+- **Status change** notifications
+- **Task assignment** notifications
+- **Comment activity** notifications
+- **User typing indicators**
+- Graceful **disconnection** handling
+- Full **error handling** for socket events
+---
+ 
+## 🛡️ Input Validation & Error Handling
+ 
+- **Email** validation (format checking)
+- **Password** validation *(min 6 chars + confirmation)*
+- **Task field** validation *(title required, length limits)*
+- **Date format** validation *(ISO 8601)*
+- **Enum** validation (status, priority)
+- **MongoDB ID** validation
+- **Array** validation (tags)
+- Standardized **error response** format
+- **Custom error classes** for different scenarios
+- **Mongoose** error handling
+- **JWT token** error handling
+- **Duplicate key** error handling
+- Detailed **validation error messages**
+---
+ 
+## 🚦 Rate Limiting
+ 
+| Endpoint | Limit |
+|---|---|
+| General API | 100 requests / 15 min |
+| Auth endpoints | 5 attempts / 15 min *(skips successful)* |
+| Task creation | 10 requests / min |
+ 
+- Rate limit headers included in responses
+- Configurable per endpoint
+---
+ 
+## 📊 Logging System
+ 
+- **Structured logger** with levels: `ERROR`, `WARN`, `INFO`, `DEBUG`
+- **Timestamps** on all log entries
+- **Contextual info**: user ID, task ID, and more
+- **Stack traces** for errors
+- **Request / response** logging
+- **Conditional debug mode**
+- **Production-safe** error messages
+---
+ 
+## 🗄️ Database & Performance
+ 
+- **User model** with refresh token support
+- **Task model** with 4 indexes
+- **Activity model** with 2 indexes
+- **Comment model** *(prepared for future use)*
+- **Lean queries** for list endpoints
+- **Populate** for detail endpoints
+- **Foreign key** references
+- **Query optimization**
+- **Efficient pagination**
+---
+ 
+## 🚀 Getting Started
+ 
+### Prerequisites
+ 
+- Node.js `>=18.x`
+- MongoDB `>=6.x`
+### Installation
+ 
+```bash
+# Clone the repository
+git clone https://github.com/your-username/task-management-api.git
+cd task-management-api
+ 
+# Install dependencies
+npm install
+ 
+# Copy environment variables
+cp .env.example .env
+```
+ 
+### Environment Variables
+ 
+```env
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/taskdb
+JWT_SECRET=your_jwt_secret
+JWT_REFRESH_SECRET=your_refresh_secret
+NODE_ENV=development
+```
+ 
+### Running the Server
+ 
+```bash
+# Development
+npm run dev
+ 
+# Production
+npm start
+```
+ 
+---
+ 
+## 📡 API Endpoints
+ 
+### Auth
+ 
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/auth/register` | Register a new user |
+| `POST` | `/api/auth/login` | Login and get tokens |
+| `POST` | `/api/auth/logout` | Invalidate refresh token |
+| `POST` | `/api/auth/refresh` | Refresh access token |
+| `GET` | `/api/auth/me` | Get current user |
+ 
+### Tasks
+ 
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/tasks` | Get all tasks (paginated) |
+| `POST` | `/api/tasks` | Create a new task |
+| `GET` | `/api/tasks/:id` | Get a single task |
+| `PATCH` | `/api/tasks/:id` | Update a task |
+| `DELETE` | `/api/tasks/:id` | Delete a task |
+| `GET` | `/api/tasks/my` | Get current user's tasks |
+| `GET` | `/api/tasks/:id/activity` | Get task activity history |
+ 
+---
+ 
+## 🔌 Socket.io Events
+ 
+| Event | Direction | Description |
+|---|---|---|
+| `join_task` | Client → Server | Join a task room |
+| `leave_task` | Client → Server | Leave a task room |
+| `task_updated` | Server → Client | Task was updated |
+| `task_assigned` | Server → Client | Task was assigned |
+| `typing` | Client → Server | User is typing |
+| `user_online` | Server → Client | User came online |
+| `user_offline` | Server → Client | User went offline |
+ 
+---
+ 
+## 📄 License
+ 
+This project is licensed under the [MIT License](LICENSE).
+
